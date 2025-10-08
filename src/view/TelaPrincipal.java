@@ -43,4 +43,3 @@ public class TelaPrincipal extends JFrame {
         add(lbl);
     }
 }
-a
