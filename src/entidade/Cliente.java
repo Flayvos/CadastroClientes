@@ -1,16 +1,14 @@
 package entidade;
 
 public class Cliente {
+    private int id;
     private String nome;
     private String cpf;
     private String email;
     private String telefone;
 
-    // Construtor padrão
-    public Cliente() {
-    }
+    public Cliente() {}
 
-    // Construtor completo
     public Cliente(String nome, String cpf, String email, String telefone) {
         this.nome = nome;
         this.cpf = cpf;
@@ -18,11 +16,16 @@ public class Cliente {
         this.telefone = telefone;
     }
 
-    // Getters e Setters
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getNome() {
         return nome;
     }
-
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -30,7 +33,6 @@ public class Cliente {
     public String getCpf() {
         return cpf;
     }
-
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
@@ -38,7 +40,6 @@ public class Cliente {
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -46,7 +47,6 @@ public class Cliente {
     public String getTelefone() {
         return telefone;
     }
-
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
