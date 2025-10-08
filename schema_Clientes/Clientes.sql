@@ -8,3 +8,4 @@ CREATE TABLE cliente (
     email VARCHAR(100),
     telefone VARCHAR(20)
 );
+a
