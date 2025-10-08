@@ -1,11 +1,14 @@
 package view;
 
 import entidade.Cliente;
+import dao.ConexaoBD;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class TelaCadastroCliente extends JFrame {
 
@@ -15,14 +18,12 @@ public class TelaCadastroCliente extends JFrame {
     public TelaCadastroCliente() {
         setTitle("Cadastro de Cliente");
         setSize(400, 300);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // fecha só essa tela
         setLocationRelativeTo(null);
 
-        // Painel principal
         JPanel panel = new JPanel(new GridLayout(5, 2, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Campos de texto e labels
         panel.add(new JLabel("Nome:"));
         txtNome = new JTextField();
         panel.add(txtNome);
@@ -39,7 +40,6 @@ public class TelaCadastroCliente extends JFrame {
         txtTelefone = new JTextField();
         panel.add(txtTelefone);
 
-        // Botões
         btnSalvar = new JButton("Salvar");
         btnCancelar = new JButton("Cancelar");
 
@@ -47,35 +47,43 @@ public class TelaCadastroCliente extends JFrame {
         buttonPanel.add(btnSalvar);
         buttonPanel.add(btnCancelar);
 
-        // Ações dos botões
-        btnSalvar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Cliente cliente = new Cliente(
-                        txtNome.getText(),
-                        txtCpf.getText(),
-                        txtEmail.getText(),
-                        txtTelefone.getText()
-                );
-                JOptionPane.showMessageDialog(null,
-                         "Cliente salvo com sucesso!\n\n" +
-                        "Nome: " + cliente.getNome() + "\n" +
-                        "CPF: " + cliente.getCpf() + "\n" +
-                        "E-mail: " + cliente.getEmail() + "\n" +
-                        "Telefone: " + cliente.getTelefone());
-            }
-        });
+        // Botão Salvar → Grava no banco
+        btnSalvar.addActionListener(this::salvarCliente);
 
-        btnCancelar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose(); // Fecha a janela
-                // ou use System.exit(0) se quiser encerrar tudo
-            }
-        });
+        // Botão Cancelar → Fecha a tela e volta à principal
+        btnCancelar.addActionListener(e -> dispose());
 
-        // Adiciona componentes à janela
         getContentPane().add(panel, BorderLayout.CENTER);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    private void salvarCliente(ActionEvent e) {
+        String nome = txtNome.getText();
+        String cpf = txtCpf.getText();
+        String email = txtEmail.getText();
+        String telefone = txtTelefone.getText();
+
+        Cliente cliente = new Cliente(nome, cpf, email, telefone);
+
+        try (Connection conn = ConexaoBD.conectar()) {
+            if (conn == null) {
+                JOptionPane.showMessageDialog(this, "Erro de conexão com o banco!");
+                return;
+            }
+
+            String sql = "INSERT INTO cliente (nome, cpf, email, telefone) VALUES (?, ?, ?, ?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, cliente.getNome());
+            ps.setString(2, cliente.getCpf());
+            ps.setString(3, cliente.getEmail());
+            ps.setString(4, cliente.getTelefone());
+            ps.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Cliente salvo com sucesso!");
+            dispose();
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao salvar cliente: " + ex.getMessage());
+        }
     }
 }

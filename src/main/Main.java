@@ -1,6 +1,7 @@
 package main;
 
 import view.TelaCadastroCliente;
+import view.TelaPrincipal;
 
 public class Main {
     public static void main(String[] args) {
@@ -8,7 +9,7 @@ public class Main {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new TelaCadastroCliente().setVisible(true);
+                new TelaPrincipal().setVisible(true);
             }
         });
     }
